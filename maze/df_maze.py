@@ -20,6 +20,9 @@ class Cell:
     def __init__(self, x, y):
         """Initialize the cell at (x,y). At first it is surrounded by walls."""
 
+        # Tracks whether this node has been visited for the purpose of the search
+        self.visited = False
+
         self.x, self.y = x, y
         self.walls = {'N': True, 'S': True, 'E': True, 'W': True}
 
@@ -44,6 +47,7 @@ class Maze:
         at the cell indexed at (ix, iy).
 
         """
+        
 
         self.nx, self.ny = nx, ny
         self.ix, self.iy = ix, iy
@@ -87,7 +91,7 @@ class Maze:
         return '\n'.join(maze_rows)
 
 
-    def write_svg(self, filename):
+    def write_svg(self, filename, mazePath: list):
         """Write an SVG image of the maze to filename."""
 
         aspect_ratio = self.nx / self.ny
@@ -151,11 +155,18 @@ class Maze:
             #print('<line x1="0" y1="0" x2="{}" y2="0"/>'.format(width), file=f)
             #print('<line x1="0" y1="0" x2="0" y2="{}"/>'.format(height), file=f)
 
+            # Iterate through the list of cells in the path, marking them on the image
+            if mazePath != None:
+                for cl in mazePath:
+                    add_cell_rect(f, cl.x, cl.y, 'gray')
+
             if self.add_begin_end:
                 add_cell_rect(f, 0, 0, 'green')
                 add_cell_rect(f, self.nx - 1, self.ny - 1, 'red')
+
             if self.add_treasure:
                 add_cell_rect(f, self.treasure_x, self.treasure_y, 'yellow')
+
 
             print('</svg>', file=f)
 
